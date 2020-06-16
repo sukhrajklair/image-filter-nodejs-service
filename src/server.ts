@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
+const url = require('url');
+
 (async () => {
 
   // Init the Express application
@@ -31,6 +33,18 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
   
+  app.get('/filteredimage',async (req, res) => {
+    try{
+      const image_url = new URL(req.query.image_url);
+      const filteredpath = await filterImageFromURL(req.query.image_url);
+      res.status(200).sendFile(filteredpath);
+    } catch(error){
+      console.log("passed url is not valid:", req.query.image_url);
+      res.status(422).send("provided image url is not valid");
+    }
+    
+  })
+
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
